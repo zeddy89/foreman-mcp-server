@@ -58,6 +58,55 @@ const HostPowerSchema = z.object({
   action: z.enum(['start', 'stop', 'poweroff', 'reboot', 'reset', 'state', 'ready', 'cycle'])
 });
 
+const HostGroupListSchema = z.object({
+  search: z.string().optional(),
+  organization_id: z.string().optional(),
+  location_id: z.string().optional(),
+  per_page: z.number().optional(),
+  page: z.number().optional()
+});
+
+const HostGroupGetSchema = z.object({
+  id: z.string()
+});
+
+const HostGroupCreateSchema = z.object({
+  name: z.string(),
+  parent_id: z.string().optional(),
+  environment_id: z.string().optional(),
+  compute_profile_id: z.string().optional(),
+  compute_resource_id: z.string().optional(),
+  subnet_id: z.string().optional(),
+  domain_id: z.string().optional(),
+  realm_id: z.string().optional(),
+  architecture_id: z.string().optional(),
+  operatingsystem_id: z.string().optional(),
+  medium_id: z.string().optional(),
+  ptable_id: z.string().optional(),
+  pxe_loader: z.string().optional(),
+  root_pass: z.string().optional(),
+  organization_ids: z.array(z.string()).optional(),
+  location_ids: z.array(z.string()).optional()
+});
+
+const HostGroupUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  parent_id: z.string().optional(),
+  environment_id: z.string().optional(),
+  compute_profile_id: z.string().optional(),
+  compute_resource_id: z.string().optional(),
+  subnet_id: z.string().optional(),
+  domain_id: z.string().optional(),
+  realm_id: z.string().optional(),
+  architecture_id: z.string().optional(),
+  operatingsystem_id: z.string().optional(),
+  medium_id: z.string().optional(),
+  ptable_id: z.string().optional(),
+  pxe_loader: z.string().optional(),
+  root_pass: z.string().optional()
+});
+
 const ContentViewListSchema = z.object({
   organization_id: z.string().optional(),
   environment_id: z.string().optional(),
@@ -389,6 +438,94 @@ const tools: Tool[] = [
         }
       },
       required: ['id', 'action']
+    }
+  },
+  // Host Group Management Tools
+  {
+    name: 'foreman_list_hostgroups',
+    description: 'List all host groups',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        search: { type: 'string', description: 'Search query' },
+        organization_id: { type: 'string', description: 'Filter by organization ID' },
+        location_id: { type: 'string', description: 'Filter by location ID' },
+        per_page: { type: 'number', description: 'Results per page' },
+        page: { type: 'number', description: 'Page number' }
+      }
+    }
+  },
+  {
+    name: 'foreman_get_hostgroup',
+    description: 'Get detailed information about a host group',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Host group ID or name' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_create_hostgroup',
+    description: 'Create a new host group',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Host group name' },
+        parent_id: { type: 'string', description: 'Parent host group ID' },
+        environment_id: { type: 'string', description: 'Environment ID' },
+        compute_profile_id: { type: 'string', description: 'Compute profile ID' },
+        compute_resource_id: { type: 'string', description: 'Compute resource ID' },
+        subnet_id: { type: 'string', description: 'Subnet ID' },
+        domain_id: { type: 'string', description: 'Domain ID' },
+        realm_id: { type: 'string', description: 'Realm ID' },
+        architecture_id: { type: 'string', description: 'Architecture ID' },
+        operatingsystem_id: { type: 'string', description: 'Operating system ID' },
+        medium_id: { type: 'string', description: 'Installation medium ID' },
+        ptable_id: { type: 'string', description: 'Partition table ID' },
+        pxe_loader: { type: 'string', description: 'PXE loader' },
+        root_pass: { type: 'string', description: 'Root password' },
+        organization_ids: { type: 'array', items: { type: 'string' }, description: 'Organization IDs' },
+        location_ids: { type: 'array', items: { type: 'string' }, description: 'Location IDs' }
+      },
+      required: ['name']
+    }
+  },
+  {
+    name: 'foreman_update_hostgroup',
+    description: 'Update an existing host group',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Host group ID' },
+        name: { type: 'string', description: 'New name' },
+        parent_id: { type: 'string', description: 'New parent host group ID' },
+        environment_id: { type: 'string', description: 'New environment ID' },
+        compute_profile_id: { type: 'string', description: 'New compute profile ID' },
+        compute_resource_id: { type: 'string', description: 'New compute resource ID' },
+        subnet_id: { type: 'string', description: 'New subnet ID' },
+        domain_id: { type: 'string', description: 'New domain ID' },
+        realm_id: { type: 'string', description: 'New realm ID' },
+        architecture_id: { type: 'string', description: 'New architecture ID' },
+        operatingsystem_id: { type: 'string', description: 'New operating system ID' },
+        medium_id: { type: 'string', description: 'New installation medium ID' },
+        ptable_id: { type: 'string', description: 'New partition table ID' },
+        pxe_loader: { type: 'string', description: 'New PXE loader' },
+        root_pass: { type: 'string', description: 'New root password' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_delete_hostgroup',
+    description: 'Delete a host group',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Host group ID' }
+      },
+      required: ['id']
     }
   },
   // Content View Tools
@@ -984,6 +1121,33 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'foreman_power_host': {
         const params = HostPowerSchema.parse(args);
         const result = await foremanClient.powerHost(params.id, params.action);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      // Host Group Management
+      case 'foreman_list_hostgroups': {
+        const params = HostGroupListSchema.parse(args);
+        const result = await foremanClient.listHostGroups(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_get_hostgroup': {
+        const params = HostGroupGetSchema.parse(args);
+        const result = await foremanClient.getHostGroup(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_create_hostgroup': {
+        const params = HostGroupCreateSchema.parse(args);
+        const result = await foremanClient.createHostGroup(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_update_hostgroup': {
+        const params = HostGroupUpdateSchema.parse(args);
+        const { id, ...updateData } = params;
+        const result = await foremanClient.updateHostGroup(id, updateData);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_delete_hostgroup': {
+        const params = HostGroupGetSchema.parse(args);
+        const result = await foremanClient.deleteHostGroup(params.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Content View Management

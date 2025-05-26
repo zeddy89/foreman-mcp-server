@@ -185,6 +185,32 @@ export class ForemanClient {
     return response.data;
   }
 
+  // Host Group Management
+  async listHostGroups(params?: any) {
+    const response = await this.client.get('/hostgroups', { params });
+    return response.data;
+  }
+
+  async getHostGroup(id: string) {
+    const response = await this.client.get(`/hostgroups/${id}`);
+    return response.data;
+  }
+
+  async createHostGroup(hostgroupData: any) {
+    const response = await this.client.post('/hostgroups', { hostgroup: hostgroupData });
+    return response.data;
+  }
+
+  async updateHostGroup(id: string, hostgroupData: any) {
+    const response = await this.client.put(`/hostgroups/${id}`, { hostgroup: hostgroupData });
+    return response.data;
+  }
+
+  async deleteHostGroup(id: string) {
+    const response = await this.client.delete(`/hostgroups/${id}`);
+    return response.data;
+  }
+
   // Task Management
   async listTasks(params?: any) {
     const response = await this.client.get('/foreman_tasks/tasks', { params });
