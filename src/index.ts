@@ -367,7 +367,8 @@ const getForemanConfig = (): ForemanConfig => {
 };
 
 // Initialize Foreman client
-let foremanClient: ForemanClient;
+let foremanClient: ForemanClient | null = null;
+let initializationError: Error | null = null;
 
 try {
   const config = getForemanConfig();
@@ -375,8 +376,9 @@ try {
   // Silence initialization messages for Claude Code compatibility
   // Any output during startup may cause connection issues
 } catch (error) {
-  console.error('Failed to initialize Foreman client:', error);
-  process.exit(1);
+  // Store error for later reporting through MCP protocol
+  // Do NOT use console.error as it corrupts MCP communication
+  initializationError = error as Error;
 }
 
 // Define available tools
@@ -1213,6 +1215,20 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     const { name, arguments: args } = request.params;
 
+    // Check if client was initialized successfully
+    if (!foremanClient) {
+      const errorMessage = initializationError 
+        ? `Foreman client initialization failed: ${initializationError.message}`
+        : 'Foreman client not initialized';
+      return { 
+        content: [{ 
+          type: 'text', 
+          text: errorMessage 
+        }],
+        isError: true
+      };
+    }
+
     switch (name) {
       // Host Management
       case 'foreman_list_hosts': {
@@ -1531,6 +1547,7 @@ async function main() {
 }
 
 main().catch((error) => {
-  console.error('Server error:', error);
+  // Silent exit on server error to avoid corrupting MCP protocol
+  // The error will be visible in the MCP logs
   process.exit(1);
 });
