@@ -20,13 +20,31 @@ npm run build
 
 ## Configuration
 
-Set the following environment variables:
+The server can be configured using either environment variables or a configuration file.
+
+### Option 1: Environment Variables
 
 ```bash
 export FOREMAN_URL="https://your-foreman-instance.com"
 export FOREMAN_USERNAME="your-username"
 export FOREMAN_TOKEN="your-personal-access-token"
 ```
+
+### Option 2: Configuration File
+
+Create a `foreman-config.json` file in the project root:
+
+```json
+{
+  "baseUrl": "https://your-foreman-instance.com",
+  "username": "your-username",
+  "token": "your-personal-access-token"
+}
+```
+
+**Note**: The configuration file is ignored by git for security. Never commit credentials.
+
+### Generating a Personal Access Token
 
 To generate a Personal Access Token in Foreman:
 1. Log in to your Foreman instance

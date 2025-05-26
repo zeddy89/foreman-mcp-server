@@ -7,6 +7,9 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import { z } from 'zod';
 import { ForemanClient, ForemanConfig } from './foreman-client.js';
+import { readFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 // Schema definitions for tool parameters
 const HostListSchema = z.object({
@@ -353,17 +356,37 @@ const server = new Server(
   }
 );
 
-// Get Foreman configuration from environment variables
+// Get current directory for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Get Foreman configuration from environment variables or config file
 const getForemanConfig = (): ForemanConfig => {
+  // First try environment variables
   const baseUrl = process.env.FOREMAN_URL;
   const username = process.env.FOREMAN_USERNAME;
   const token = process.env.FOREMAN_TOKEN;
 
-  if (!baseUrl || !username || !token) {
-    throw new Error('Missing required environment variables: FOREMAN_URL, FOREMAN_USERNAME, FOREMAN_TOKEN');
+  if (baseUrl && username && token) {
+    return { baseUrl, username, token };
   }
 
-  return { baseUrl, username, token };
+  // Fall back to config file
+  const configPath = join(__dirname, '..', 'foreman-config.json');
+  if (existsSync(configPath)) {
+    const configData = readFileSync(configPath, 'utf-8');
+    const config = JSON.parse(configData);
+    
+    if (config.baseUrl && config.username && config.token) {
+      return {
+        baseUrl: config.baseUrl,
+        username: config.username,
+        token: config.token
+      };
+    }
+  }
+
+  throw new Error('Foreman configuration not found. Please set environment variables (FOREMAN_URL, FOREMAN_USERNAME, FOREMAN_TOKEN) or create foreman-config.json');
 };
 
 // Initialize Foreman client
