@@ -372,8 +372,8 @@ let foremanClient: ForemanClient;
 try {
   const config = getForemanConfig();
   foremanClient = new ForemanClient(config);
-  console.error('Foreman MCP server initialized successfully');
-  console.error('Note: SSL certificate verification is disabled for self-signed certificates');
+  // Silence initialization messages for Claude Code compatibility
+  // Any output during startup may cause connection issues
 } catch (error) {
   console.error('Failed to initialize Foreman client:', error);
   process.exit(1);
@@ -1527,7 +1527,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('Foreman MCP server running on stdio');
+  // Silence startup message for Claude Code compatibility
 }
 
 main().catch((error) => {
