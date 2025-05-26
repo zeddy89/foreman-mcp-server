@@ -3,6 +3,7 @@ import https from 'https';
 
 export interface ForemanConfig {
   baseUrl: string;
+  username: string;
   token: string;
 }
 
@@ -20,10 +21,13 @@ export class ForemanClient {
     
     this.client = axios.create({
       baseURL: config.baseUrl,
+      auth: {
+        username: config.username,
+        password: config.token
+      },
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${config.token}`
+        'Accept': 'application/json'
       },
       httpsAgent: httpsAgent
     });
@@ -35,7 +39,7 @@ export class ForemanClient {
         if (error.code === 'ECONNREFUSED') {
           throw new Error(`Cannot connect to Foreman at ${config.baseUrl}. Please check the URL and ensure Foreman is running.`);
         } else if (error.response?.status === 401) {
-          throw new Error('Authentication failed. Please check your Foreman API token.');
+          throw new Error('Authentication failed. Please check your Foreman username and API token.');
         } else if (error.response?.status === 404) {
           throw new Error(`API endpoint not found. Please check your Foreman version and API path.`);
         }

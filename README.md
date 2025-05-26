@@ -24,6 +24,7 @@ Set the following environment variables:
 
 ```bash
 export FOREMAN_URL="https://your-foreman-instance.com"
+export FOREMAN_USERNAME="your-username"
 export FOREMAN_TOKEN="your-personal-access-token"
 ```
 
@@ -32,6 +33,8 @@ To generate a Personal Access Token in Foreman:
 2. Navigate to your user account settings
 3. Go to the "Personal Access Tokens" section
 4. Create a new token with appropriate permissions
+
+Note: The token is used as the password in HTTP Basic authentication with your username.
 
 ## Usage with Claude Desktop
 
@@ -45,6 +48,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
       "args": ["/path/to/foreman-mcp-server/dist/index.js"],
       "env": {
         "FOREMAN_URL": "https://your-foreman-instance.com",
+        "FOREMAN_USERNAME": "your-username",
         "FOREMAN_TOKEN": "your-personal-access-token"
       }
     }

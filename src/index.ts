@@ -356,13 +356,14 @@ const server = new Server(
 // Get Foreman configuration from environment variables
 const getForemanConfig = (): ForemanConfig => {
   const baseUrl = process.env.FOREMAN_URL;
+  const username = process.env.FOREMAN_USERNAME;
   const token = process.env.FOREMAN_TOKEN;
 
-  if (!baseUrl || !token) {
-    throw new Error('Missing required environment variables: FOREMAN_URL, FOREMAN_TOKEN');
+  if (!baseUrl || !username || !token) {
+    throw new Error('Missing required environment variables: FOREMAN_URL, FOREMAN_USERNAME, FOREMAN_TOKEN');
   }
 
-  return { baseUrl, token };
+  return { baseUrl, username, token };
 };
 
 // Initialize Foreman client
