@@ -338,6 +338,8 @@ let foremanClient: ForemanClient;
 try {
   const config = getForemanConfig();
   foremanClient = new ForemanClient(config);
+  console.error('Foreman MCP server initialized successfully');
+  console.error('Note: SSL certificate verification is disabled for self-signed certificates');
 } catch (error) {
   console.error('Failed to initialize Foreman client:', error);
   process.exit(1);

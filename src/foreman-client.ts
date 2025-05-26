@@ -1,4 +1,5 @@
 import axios, { AxiosInstance } from 'axios';
+import https from 'https';
 
 export interface ForemanConfig {
   baseUrl: string;
@@ -12,6 +13,12 @@ export class ForemanClient {
 
   constructor(config: ForemanConfig) {
     this.config = config;
+    
+    // Create an HTTPS agent that ignores self-signed certificates
+    const httpsAgent = new https.Agent({
+      rejectUnauthorized: false
+    });
+    
     this.client = axios.create({
       baseURL: `${config.baseUrl}/api/v2`,
       auth: {
@@ -21,8 +28,24 @@ export class ForemanClient {
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
-      }
+      },
+      httpsAgent: httpsAgent
     });
+    
+    // Add response interceptor for better error handling
+    this.client.interceptors.response.use(
+      response => response,
+      error => {
+        if (error.code === 'ECONNREFUSED') {
+          throw new Error(`Cannot connect to Foreman at ${config.baseUrl}. Please check the URL and ensure Foreman is running.`);
+        } else if (error.response?.status === 401) {
+          throw new Error('Authentication failed. Please check your Foreman username and password.');
+        } else if (error.response?.status === 404) {
+          throw new Error(`API endpoint not found. Please check your Foreman version and API path.`);
+        }
+        throw error;
+      }
+    );
   }
 
   // Host Management
