@@ -24,9 +24,14 @@ Set the following environment variables:
 
 ```bash
 export FOREMAN_URL="https://your-foreman-instance.com"
-export FOREMAN_USERNAME="your-username"
-export FOREMAN_PASSWORD="your-password"
+export FOREMAN_TOKEN="your-personal-access-token"
 ```
+
+To generate a Personal Access Token in Foreman:
+1. Log in to your Foreman instance
+2. Navigate to your user account settings
+3. Go to the "Personal Access Tokens" section
+4. Create a new token with appropriate permissions
 
 ## Usage with Claude Desktop
 
@@ -40,8 +45,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
       "args": ["/path/to/foreman-mcp-server/dist/index.js"],
       "env": {
         "FOREMAN_URL": "https://your-foreman-instance.com",
-        "FOREMAN_USERNAME": "your-username",
-        "FOREMAN_PASSWORD": "your-password"
+        "FOREMAN_TOKEN": "your-personal-access-token"
       }
     }
   }
@@ -104,10 +108,11 @@ npm start
 
 ## Security Notes
 
-- Credentials are passed via environment variables
+- Authentication uses Personal Access Tokens (PAT) for enhanced security
+- Tokens are passed via environment variables
 - All API calls use HTTPS
-- Basic authentication is used for API access
-- Never commit credentials to version control
+- SSL certificate verification can be disabled for self-signed certificates
+- Never commit tokens or credentials to version control
 
 ## Extending the Server
 
@@ -122,4 +127,5 @@ To add new API endpoints:
 - Ensure Foreman API v2 is accessible at the configured URL
 - Verify credentials have appropriate permissions
 - Check that the Foreman instance allows API access from your IP
-- For SSL issues, you may need to set `NODE_TLS_REJECT_UNAUTHORIZED=0` (not recommended for production)
+- The server automatically handles self-signed SSL certificates
+- For additional SSL debugging, you may set `NODE_TLS_REJECT_UNAUTHORIZED=0` (not recommended for production)
