@@ -108,7 +108,7 @@ const HostGroupUpdateSchema = z.object({
 });
 
 const ProductListSchema = z.object({
-  organization_id: z.string().optional(),
+  organization_id: z.string(),
   name: z.string().optional(),
   search: z.string().optional(),
   per_page: z.number().optional(),
@@ -142,7 +142,7 @@ const ProductUpdateSchema = z.object({
 });
 
 const ContentViewListSchema = z.object({
-  organization_id: z.string().optional(),
+  organization_id: z.string(),
   environment_id: z.string().optional(),
   name: z.string().optional(),
   search: z.string().optional()
@@ -167,7 +167,7 @@ const ContentViewPublishSchema = z.object({
 });
 
 const RepositoryListSchema = z.object({
-  organization_id: z.string().optional(),
+  organization_id: z.string(),
   product_id: z.string().optional(),
   name: z.string().optional(),
   content_type: z.string().optional()
@@ -567,11 +567,12 @@ const tools: Tool[] = [
   // Product Management Tools
   {
     name: 'foreman_list_products',
-    description: 'List all products',
+    description: 'List all products in an organization',
     inputSchema: {
       type: 'object',
+      required: ['organization_id'],
       properties: {
-        organization_id: { type: 'string', description: 'Filter by organization ID' },
+        organization_id: { type: 'string', description: 'Organization ID (required)' },
         name: { type: 'string', description: 'Filter by name' },
         search: { type: 'string', description: 'Search query' },
         per_page: { type: 'number', description: 'Results per page' },
@@ -651,11 +652,12 @@ const tools: Tool[] = [
   // Content View Tools
   {
     name: 'foreman_list_content_views',
-    description: 'List all content views',
+    description: 'List all content views in an organization',
     inputSchema: {
       type: 'object',
+      required: ['organization_id'],
       properties: {
-        organization_id: { type: 'string', description: 'Filter by organization ID' },
+        organization_id: { type: 'string', description: 'Organization ID (required)' },
         environment_id: { type: 'string', description: 'Filter by environment ID' },
         name: { type: 'string', description: 'Filter by name' },
         search: { type: 'string', description: 'Search query' }
@@ -712,11 +714,12 @@ const tools: Tool[] = [
   // Repository Tools
   {
     name: 'foreman_list_repositories',
-    description: 'List all repositories',
+    description: 'List all repositories in an organization',
     inputSchema: {
       type: 'object',
+      required: ['organization_id'],
       properties: {
-        organization_id: { type: 'string', description: 'Filter by organization ID' },
+        organization_id: { type: 'string', description: 'Organization ID (required)' },
         product_id: { type: 'string', description: 'Filter by product ID' },
         name: { type: 'string', description: 'Filter by name' },
         content_type: { type: 'string', description: 'Filter by content type' }
