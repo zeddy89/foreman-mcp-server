@@ -196,6 +196,151 @@ export class ForemanClient {
     return response.data;
   }
 
+  // Compute Resource Management
+  async listComputeResources(params?: any) {
+    const response = await this.client.get('/compute_resources', { params });
+    return response.data;
+  }
+
+  async getComputeResource(id: string) {
+    const response = await this.client.get(`/compute_resources/${id}`);
+    return response.data;
+  }
+
+  async createComputeResource(resourceData: any) {
+    const response = await this.client.post('/compute_resources', { compute_resource: resourceData });
+    return response.data;
+  }
+
+  async updateComputeResource(id: string, resourceData: any) {
+    const response = await this.client.put(`/compute_resources/${id}`, { compute_resource: resourceData });
+    return response.data;
+  }
+
+  async deleteComputeResource(id: string) {
+    const response = await this.client.delete(`/compute_resources/${id}`);
+    return response.data;
+  }
+
+  async getComputeResourceAvailableImages(id: string) {
+    const response = await this.client.get(`/compute_resources/${id}/available_images`);
+    return response.data;
+  }
+
+  async getComputeResourceAvailableNetworks(id: string) {
+    const response = await this.client.get(`/compute_resources/${id}/available_networks`);
+    return response.data;
+  }
+
+  // Smart Proxy Management
+  async listSmartProxies(params?: any) {
+    const response = await this.client.get('/smart_proxies', { params });
+    return response.data;
+  }
+
+  async getSmartProxy(id: string) {
+    const response = await this.client.get(`/smart_proxies/${id}`);
+    return response.data;
+  }
+
+  async createSmartProxy(proxyData: any) {
+    const response = await this.client.post('/smart_proxies', { smart_proxy: proxyData });
+    return response.data;
+  }
+
+  async updateSmartProxy(id: string, proxyData: any) {
+    const response = await this.client.put(`/smart_proxies/${id}`, { smart_proxy: proxyData });
+    return response.data;
+  }
+
+  async deleteSmartProxy(id: string) {
+    const response = await this.client.delete(`/smart_proxies/${id}`);
+    return response.data;
+  }
+
+  async refreshSmartProxy(id: string) {
+    const response = await this.client.put(`/smart_proxies/${id}/refresh`);
+    return response.data;
+  }
+
+  // Compute Profile Management
+  async listComputeProfiles(params?: any) {
+    const response = await this.client.get('/compute_profiles', { params });
+    return response.data;
+  }
+
+  async getComputeProfile(id: string) {
+    const response = await this.client.get(`/compute_profiles/${id}`);
+    return response.data;
+  }
+
+  async createComputeProfile(profileData: any) {
+    const response = await this.client.post('/compute_profiles', { compute_profile: profileData });
+    return response.data;
+  }
+
+  async updateComputeProfile(id: string, profileData: any) {
+    const response = await this.client.put(`/compute_profiles/${id}`, { compute_profile: profileData });
+    return response.data;
+  }
+
+  async deleteComputeProfile(id: string) {
+    const response = await this.client.delete(`/compute_profiles/${id}`);
+    return response.data;
+  }
+
+  // Subnet Management
+  async listSubnets(params?: any) {
+    const response = await this.client.get('/subnets', { params });
+    return response.data;
+  }
+
+  async getSubnet(id: string) {
+    const response = await this.client.get(`/subnets/${id}`);
+    return response.data;
+  }
+
+  async createSubnet(subnetData: any) {
+    const response = await this.client.post('/subnets', { subnet: subnetData });
+    return response.data;
+  }
+
+  async updateSubnet(id: string, subnetData: any) {
+    const response = await this.client.put(`/subnets/${id}`, { subnet: subnetData });
+    return response.data;
+  }
+
+  async deleteSubnet(id: string) {
+    const response = await this.client.delete(`/subnets/${id}`);
+    return response.data;
+  }
+
+  // Domain Management
+  async listDomains(params?: any) {
+    const response = await this.client.get('/domains', { params });
+    return response.data;
+  }
+
+  async getDomain(id: string) {
+    const response = await this.client.get(`/domains/${id}`);
+    return response.data;
+  }
+
+  async createDomain(domainData: any) {
+    const response = await this.client.post('/domains', { domain: domainData });
+    return response.data;
+  }
+
+  async updateDomain(id: string, domainData: any) {
+    const response = await this.client.put(`/domains/${id}`, { domain: domainData });
+    return response.data;
+  }
+
+  async deleteDomain(id: string) {
+    const response = await this.client.delete(`/domains/${id}`);
+    return response.data;
+  }
+
   // Generic request method for additional endpoints
   async request(method: string, path: string, data?: any, params?: any) {
     const response = await this.client.request({
