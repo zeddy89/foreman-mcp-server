@@ -102,6 +102,29 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 ### Task Management
 - `foreman_list_tasks` - List Foreman tasks with filters for state and result
 
+### Provisioning Tools
+
+#### Installation Media
+- `foreman_list_media` - List all installation media
+- `foreman_get_medium` - Get details of an installation medium
+- `foreman_create_medium` - Create a new installation medium
+- `foreman_update_medium` - Update an installation medium
+- `foreman_delete_medium` - Delete an installation medium
+
+#### Partition Tables
+- `foreman_list_partition_tables` - List all partition tables
+- `foreman_get_partition_table` - Get details of a partition table
+- `foreman_create_partition_table` - Create a new partition table
+- `foreman_update_partition_table` - Update a partition table
+- `foreman_delete_partition_table` - Delete a partition table
+
+#### Operating Systems
+- `foreman_list_operating_systems` - List all operating systems
+- `foreman_get_operating_system` - Get details of an operating system
+- `foreman_create_operating_system` - Create a new operating system
+- `foreman_update_operating_system` - Update an operating system
+- `foreman_delete_operating_system` - Delete an operating system
+
 ## Natural Language Examples
 
 The server includes natural language processing capabilities. You can use phrases like:

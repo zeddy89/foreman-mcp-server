@@ -343,6 +343,94 @@ const DomainCreateSchema = z.object({
   location_ids: z.array(z.string()).optional()
 });
 
+// Installation Media Schemas
+const MediaListSchema = z.object({
+  search: z.string().optional(),
+  organization_id: z.string().optional(),
+  location_id: z.string().optional(),
+  per_page: z.number().optional(),
+  page: z.number().optional()
+});
+
+const MediaCreateSchema = z.object({
+  name: z.string(),
+  path: z.string(),
+  os_family: z.enum(['Debian', 'Redhat', 'SUSE', 'Windows', 'Altlinux', 'Archlinux', 'Coreos', 'FreeBSD', 'Gentoo', 'Junos', 'NXOS', 'Rancheros', 'Solaris', 'VRP', 'XenServer']).optional(),
+  organization_ids: z.array(z.string()).optional(),
+  location_ids: z.array(z.string()).optional()
+});
+
+const MediaUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  path: z.string().optional(),
+  os_family: z.string().optional(),
+  organization_ids: z.array(z.string()).optional(),
+  location_ids: z.array(z.string()).optional()
+});
+
+// Partition Table Schemas
+const PartitionTableListSchema = z.object({
+  search: z.string().optional(),
+  organization_id: z.string().optional(),
+  location_id: z.string().optional(),
+  per_page: z.number().optional(),
+  page: z.number().optional()
+});
+
+const PartitionTableCreateSchema = z.object({
+  name: z.string(),
+  layout: z.string(),
+  os_family: z.enum(['Debian', 'Redhat', 'SUSE', 'Windows', 'Altlinux', 'Archlinux', 'Coreos', 'FreeBSD', 'Gentoo', 'Junos', 'NXOS', 'Rancheros', 'Solaris', 'VRP', 'XenServer']).optional(),
+  organization_ids: z.array(z.string()).optional(),
+  location_ids: z.array(z.string()).optional()
+});
+
+const PartitionTableUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  layout: z.string().optional(),
+  os_family: z.string().optional(),
+  organization_ids: z.array(z.string()).optional(),
+  location_ids: z.array(z.string()).optional()
+});
+
+// Operating System Schemas
+const OperatingSystemListSchema = z.object({
+  search: z.string().optional(),
+  organization_id: z.string().optional(),
+  location_id: z.string().optional(),
+  per_page: z.number().optional(),
+  page: z.number().optional()
+});
+
+const OperatingSystemCreateSchema = z.object({
+  name: z.string(),
+  major: z.string(),
+  minor: z.string().optional(),
+  family: z.enum(['Debian', 'Redhat', 'SUSE', 'Windows', 'Altlinux', 'Archlinux', 'Coreos', 'FreeBSD', 'Gentoo', 'Junos', 'NXOS', 'Rancheros', 'Solaris', 'VRP', 'XenServer']).optional(),
+  release_name: z.string().optional(),
+  description: z.string().optional(),
+  password_hash: z.enum(['MD5', 'SHA256', 'SHA512', 'Base64', 'Base64-Windows']).optional(),
+  architecture_ids: z.array(z.string()).optional(),
+  medium_ids: z.array(z.string()).optional(),
+  ptable_ids: z.array(z.string()).optional()
+});
+
+const OperatingSystemUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  major: z.string().optional(),
+  minor: z.string().optional(),
+  family: z.string().optional(),
+  release_name: z.string().optional(),
+  description: z.string().optional(),
+  password_hash: z.string().optional(),
+  architecture_ids: z.array(z.string()).optional(),
+  medium_ids: z.array(z.string()).optional(),
+  ptable_ids: z.array(z.string()).optional()
+});
+
 // Initialize MCP server
 const server = new Server(
   {
@@ -1225,6 +1313,220 @@ const tools: Tool[] = [
       },
       required: ['id']
     }
+  },
+  // Installation Media Tools
+  {
+    name: 'foreman_list_media',
+    description: 'List all installation media',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        search: { type: 'string', description: 'Search query' },
+        organization_id: { type: 'string', description: 'Filter by organization' },
+        location_id: { type: 'string', description: 'Filter by location' },
+        per_page: { type: 'number', description: 'Results per page' },
+        page: { type: 'number', description: 'Page number' }
+      }
+    }
+  },
+  {
+    name: 'foreman_get_medium',
+    description: 'Get details of an installation medium',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Medium ID' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_create_medium',
+    description: 'Create a new installation medium',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Medium name' },
+        path: { type: 'string', description: 'URL or path to the medium (e.g., http://mirror.centos.org/centos/$version/os/$arch)' },
+        os_family: { type: 'string', description: 'Operating system family' },
+        organization_ids: { type: 'array', items: { type: 'string' }, description: 'Organization IDs' },
+        location_ids: { type: 'array', items: { type: 'string' }, description: 'Location IDs' }
+      },
+      required: ['name', 'path']
+    }
+  },
+  {
+    name: 'foreman_update_medium',
+    description: 'Update an installation medium',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Medium ID' },
+        name: { type: 'string', description: 'New name' },
+        path: { type: 'string', description: 'New path' },
+        os_family: { type: 'string', description: 'Operating system family' },
+        organization_ids: { type: 'array', items: { type: 'string' }, description: 'Organization IDs' },
+        location_ids: { type: 'array', items: { type: 'string' }, description: 'Location IDs' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_delete_medium',
+    description: 'Delete an installation medium',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Medium ID' }
+      },
+      required: ['id']
+    }
+  },
+  // Partition Table Tools
+  {
+    name: 'foreman_list_partition_tables',
+    description: 'List all partition tables',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        search: { type: 'string', description: 'Search query' },
+        organization_id: { type: 'string', description: 'Filter by organization' },
+        location_id: { type: 'string', description: 'Filter by location' },
+        per_page: { type: 'number', description: 'Results per page' },
+        page: { type: 'number', description: 'Page number' }
+      }
+    }
+  },
+  {
+    name: 'foreman_get_partition_table',
+    description: 'Get details of a partition table',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Partition table ID' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_create_partition_table',
+    description: 'Create a new partition table',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Partition table name' },
+        layout: { type: 'string', description: 'Partition table layout content' },
+        os_family: { type: 'string', description: 'Operating system family' },
+        organization_ids: { type: 'array', items: { type: 'string' }, description: 'Organization IDs' },
+        location_ids: { type: 'array', items: { type: 'string' }, description: 'Location IDs' }
+      },
+      required: ['name', 'layout']
+    }
+  },
+  {
+    name: 'foreman_update_partition_table',
+    description: 'Update a partition table',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Partition table ID' },
+        name: { type: 'string', description: 'New name' },
+        layout: { type: 'string', description: 'New layout content' },
+        os_family: { type: 'string', description: 'Operating system family' },
+        organization_ids: { type: 'array', items: { type: 'string' }, description: 'Organization IDs' },
+        location_ids: { type: 'array', items: { type: 'string' }, description: 'Location IDs' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_delete_partition_table',
+    description: 'Delete a partition table',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Partition table ID' }
+      },
+      required: ['id']
+    }
+  },
+  // Operating System Tools
+  {
+    name: 'foreman_list_operating_systems',
+    description: 'List all operating systems',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        search: { type: 'string', description: 'Search query' },
+        organization_id: { type: 'string', description: 'Filter by organization' },
+        location_id: { type: 'string', description: 'Filter by location' },
+        per_page: { type: 'number', description: 'Results per page' },
+        page: { type: 'number', description: 'Page number' }
+      }
+    }
+  },
+  {
+    name: 'foreman_get_operating_system',
+    description: 'Get details of an operating system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Operating system ID' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_create_operating_system',
+    description: 'Create a new operating system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'OS name (e.g., CentOS)' },
+        major: { type: 'string', description: 'Major version (e.g., 7)' },
+        minor: { type: 'string', description: 'Minor version (e.g., 9)' },
+        family: { type: 'string', description: 'OS family (Redhat, Debian, etc.)' },
+        release_name: { type: 'string', description: 'Release name' },
+        description: { type: 'string', description: 'Description' },
+        password_hash: { type: 'string', description: 'Password hash type' },
+        architecture_ids: { type: 'array', items: { type: 'string' }, description: 'Architecture IDs' },
+        medium_ids: { type: 'array', items: { type: 'string' }, description: 'Installation media IDs' },
+        ptable_ids: { type: 'array', items: { type: 'string' }, description: 'Partition table IDs' }
+      },
+      required: ['name', 'major']
+    }
+  },
+  {
+    name: 'foreman_update_operating_system',
+    description: 'Update an operating system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Operating system ID' },
+        name: { type: 'string', description: 'New name' },
+        major: { type: 'string', description: 'Major version' },
+        minor: { type: 'string', description: 'Minor version' },
+        family: { type: 'string', description: 'OS family' },
+        release_name: { type: 'string', description: 'Release name' },
+        description: { type: 'string', description: 'Description' },
+        password_hash: { type: 'string', description: 'Password hash type' },
+        architecture_ids: { type: 'array', items: { type: 'string' }, description: 'Architecture IDs' },
+        medium_ids: { type: 'array', items: { type: 'string' }, description: 'Installation media IDs' },
+        ptable_ids: { type: 'array', items: { type: 'string' }, description: 'Partition table IDs' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_delete_operating_system',
+    description: 'Delete an operating system',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Operating system ID' }
+      },
+      required: ['id']
+    }
   }
 ];
 
@@ -1546,6 +1848,87 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'foreman_delete_domain': {
         const params = ComputeResourceGetSchema.parse(args);
         const result = await foremanClient.deleteDomain(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      // Installation Media Management
+      case 'foreman_list_media': {
+        const params = MediaListSchema.parse(args);
+        const result = await foremanClient.listMedia(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_get_medium': {
+        const params = ComputeResourceGetSchema.parse(args);
+        const result = await foremanClient.getMedium(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_create_medium': {
+        const params = MediaCreateSchema.parse(args);
+        const result = await foremanClient.createMedium(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_update_medium': {
+        const params = MediaUpdateSchema.parse(args);
+        const { id, ...updateData } = params;
+        const result = await foremanClient.updateMedium(id, updateData);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_delete_medium': {
+        const params = ComputeResourceGetSchema.parse(args);
+        const result = await foremanClient.deleteMedium(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      // Partition Table Management
+      case 'foreman_list_partition_tables': {
+        const params = PartitionTableListSchema.parse(args);
+        const result = await foremanClient.listPartitionTables(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_get_partition_table': {
+        const params = ComputeResourceGetSchema.parse(args);
+        const result = await foremanClient.getPartitionTable(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_create_partition_table': {
+        const params = PartitionTableCreateSchema.parse(args);
+        const result = await foremanClient.createPartitionTable(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_update_partition_table': {
+        const params = PartitionTableUpdateSchema.parse(args);
+        const { id, ...updateData } = params;
+        const result = await foremanClient.updatePartitionTable(id, updateData);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_delete_partition_table': {
+        const params = ComputeResourceGetSchema.parse(args);
+        const result = await foremanClient.deletePartitionTable(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      // Operating System Management
+      case 'foreman_list_operating_systems': {
+        const params = OperatingSystemListSchema.parse(args);
+        const result = await foremanClient.listOperatingSystems(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_get_operating_system': {
+        const params = ComputeResourceGetSchema.parse(args);
+        const result = await foremanClient.getOperatingSystem(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_create_operating_system': {
+        const params = OperatingSystemCreateSchema.parse(args);
+        const result = await foremanClient.createOperatingSystem(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_update_operating_system': {
+        const params = OperatingSystemUpdateSchema.parse(args);
+        const { id, ...updateData } = params;
+        const result = await foremanClient.updateOperatingSystem(id, updateData);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_delete_operating_system': {
+        const params = ComputeResourceGetSchema.parse(args);
+        const result = await foremanClient.deleteOperatingSystem(params.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       default:

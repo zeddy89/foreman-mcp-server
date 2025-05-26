@@ -421,6 +421,84 @@ export class ForemanClient {
     return response.data;
   }
 
+  // Installation Media Management
+  async listMedia(params?: any) {
+    const response = await this.client.get('/api/v2/media', { params });
+    return response.data;
+  }
+
+  async getMedium(id: string) {
+    const response = await this.client.get(`/api/v2/media/${id}`);
+    return response.data;
+  }
+
+  async createMedium(mediaData: any) {
+    const response = await this.client.post('/api/v2/media', { medium: mediaData });
+    return response.data;
+  }
+
+  async updateMedium(id: string, mediaData: any) {
+    const response = await this.client.put(`/api/v2/media/${id}`, { medium: mediaData });
+    return response.data;
+  }
+
+  async deleteMedium(id: string) {
+    const response = await this.client.delete(`/api/v2/media/${id}`);
+    return response.data;
+  }
+
+  // Partition Table Management
+  async listPartitionTables(params?: any) {
+    const response = await this.client.get('/api/v2/ptables', { params });
+    return response.data;
+  }
+
+  async getPartitionTable(id: string) {
+    const response = await this.client.get(`/api/v2/ptables/${id}`);
+    return response.data;
+  }
+
+  async createPartitionTable(ptableData: any) {
+    const response = await this.client.post('/api/v2/ptables', { ptable: ptableData });
+    return response.data;
+  }
+
+  async updatePartitionTable(id: string, ptableData: any) {
+    const response = await this.client.put(`/api/v2/ptables/${id}`, { ptable: ptableData });
+    return response.data;
+  }
+
+  async deletePartitionTable(id: string) {
+    const response = await this.client.delete(`/api/v2/ptables/${id}`);
+    return response.data;
+  }
+
+  // Operating System Management
+  async listOperatingSystems(params?: any) {
+    const response = await this.client.get('/api/v2/operatingsystems', { params });
+    return response.data;
+  }
+
+  async getOperatingSystem(id: string) {
+    const response = await this.client.get(`/api/v2/operatingsystems/${id}`);
+    return response.data;
+  }
+
+  async createOperatingSystem(osData: any) {
+    const response = await this.client.post('/api/v2/operatingsystems', { operatingsystem: osData });
+    return response.data;
+  }
+
+  async updateOperatingSystem(id: string, osData: any) {
+    const response = await this.client.put(`/api/v2/operatingsystems/${id}`, { operatingsystem: osData });
+    return response.data;
+  }
+
+  async deleteOperatingSystem(id: string) {
+    const response = await this.client.delete(`/api/v2/operatingsystems/${id}`);
+    return response.data;
+  }
+
   // Generic request method for additional endpoints
   async request(method: string, path: string, data?: any, params?: any) {
     const response = await this.client.request({
