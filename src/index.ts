@@ -107,6 +107,40 @@ const HostGroupUpdateSchema = z.object({
   root_pass: z.string().optional()
 });
 
+const ProductListSchema = z.object({
+  organization_id: z.string().optional(),
+  name: z.string().optional(),
+  search: z.string().optional(),
+  per_page: z.number().optional(),
+  page: z.number().optional()
+});
+
+const ProductGetSchema = z.object({
+  id: z.string()
+});
+
+const ProductCreateSchema = z.object({
+  name: z.string(),
+  organization_id: z.string(),
+  description: z.string().optional(),
+  gpg_key_id: z.string().optional(),
+  ssl_ca_cert_id: z.string().optional(),
+  ssl_client_cert_id: z.string().optional(),
+  ssl_client_key_id: z.string().optional(),
+  sync_plan_id: z.string().optional()
+});
+
+const ProductUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string().optional(),
+  description: z.string().optional(),
+  gpg_key_id: z.string().optional(),
+  ssl_ca_cert_id: z.string().optional(),
+  ssl_client_cert_id: z.string().optional(),
+  ssl_client_key_id: z.string().optional(),
+  sync_plan_id: z.string().optional()
+});
+
 const ContentViewListSchema = z.object({
   organization_id: z.string().optional(),
   environment_id: z.string().optional(),
@@ -526,6 +560,90 @@ const tools: Tool[] = [
       type: 'object',
       properties: {
         id: { type: 'string', description: 'Host group ID' }
+      },
+      required: ['id']
+    }
+  },
+  // Product Management Tools
+  {
+    name: 'foreman_list_products',
+    description: 'List all products',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        organization_id: { type: 'string', description: 'Filter by organization ID' },
+        name: { type: 'string', description: 'Filter by name' },
+        search: { type: 'string', description: 'Search query' },
+        per_page: { type: 'number', description: 'Results per page' },
+        page: { type: 'number', description: 'Page number' }
+      }
+    }
+  },
+  {
+    name: 'foreman_get_product',
+    description: 'Get detailed information about a product',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Product ID' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_create_product',
+    description: 'Create a new product',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        name: { type: 'string', description: 'Product name' },
+        organization_id: { type: 'string', description: 'Organization ID' },
+        description: { type: 'string', description: 'Product description' },
+        gpg_key_id: { type: 'string', description: 'GPG key ID' },
+        ssl_ca_cert_id: { type: 'string', description: 'SSL CA certificate ID' },
+        ssl_client_cert_id: { type: 'string', description: 'SSL client certificate ID' },
+        ssl_client_key_id: { type: 'string', description: 'SSL client key ID' },
+        sync_plan_id: { type: 'string', description: 'Sync plan ID' }
+      },
+      required: ['name', 'organization_id']
+    }
+  },
+  {
+    name: 'foreman_update_product',
+    description: 'Update an existing product',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Product ID' },
+        name: { type: 'string', description: 'New product name' },
+        description: { type: 'string', description: 'New description' },
+        gpg_key_id: { type: 'string', description: 'New GPG key ID' },
+        ssl_ca_cert_id: { type: 'string', description: 'New SSL CA certificate ID' },
+        ssl_client_cert_id: { type: 'string', description: 'New SSL client certificate ID' },
+        ssl_client_key_id: { type: 'string', description: 'New SSL client key ID' },
+        sync_plan_id: { type: 'string', description: 'New sync plan ID' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_delete_product',
+    description: 'Delete a product',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Product ID' }
+      },
+      required: ['id']
+    }
+  },
+  {
+    name: 'foreman_sync_product',
+    description: 'Synchronize all repositories in a product',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string', description: 'Product ID' }
       },
       required: ['id']
     }
@@ -1150,6 +1268,38 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'foreman_delete_hostgroup': {
         const params = HostGroupGetSchema.parse(args);
         const result = await foremanClient.deleteHostGroup(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      // Product Management
+      case 'foreman_list_products': {
+        const params = ProductListSchema.parse(args);
+        const result = await foremanClient.listProducts(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_get_product': {
+        const params = ProductGetSchema.parse(args);
+        const result = await foremanClient.getProduct(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_create_product': {
+        const params = ProductCreateSchema.parse(args);
+        const result = await foremanClient.createProduct(params);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_update_product': {
+        const params = ProductUpdateSchema.parse(args);
+        const { id, ...updateData } = params;
+        const result = await foremanClient.updateProduct(id, updateData);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_delete_product': {
+        const params = ProductGetSchema.parse(args);
+        const result = await foremanClient.deleteProduct(params.id);
+        return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
+      }
+      case 'foreman_sync_product': {
+        const params = ProductGetSchema.parse(args);
+        const result = await foremanClient.syncProduct(params.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Content View Management
