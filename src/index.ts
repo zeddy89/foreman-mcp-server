@@ -12,7 +12,13 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 // Schema definitions for tool parameters
+// Common server parameter for all schemas
+const ServerParam = {
+  server: z.string().optional().describe('Server name to use (e.g., "foreman", "satellite"). If not specified, uses the default server.')
+};
+
 const HostListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -21,10 +27,12 @@ const HostListSchema = z.object({
 });
 
 const HostGetSchema = z.object({
+  ...ServerParam,
   id: z.string()
 });
 
 const HostCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   organization_id: z.string(),
   location_id: z.string(),
@@ -40,6 +48,7 @@ const HostCreateSchema = z.object({
 });
 
 const HostUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   hostgroup_id: z.string().optional(),
@@ -53,15 +62,18 @@ const HostUpdateSchema = z.object({
 });
 
 const HostDeleteSchema = z.object({
+  ...ServerParam,
   id: z.string()
 });
 
 const HostPowerSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   action: z.enum(['start', 'stop', 'poweroff', 'reboot', 'reset', 'state', 'ready', 'cycle'])
 });
 
 const HostGroupListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -70,10 +82,12 @@ const HostGroupListSchema = z.object({
 });
 
 const HostGroupGetSchema = z.object({
+  ...ServerParam,
   id: z.string()
 });
 
 const HostGroupCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   parent_id: z.string().optional(),
   environment_id: z.string().optional(),
@@ -93,6 +107,7 @@ const HostGroupCreateSchema = z.object({
 });
 
 const HostGroupUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   parent_id: z.string().optional(),
@@ -111,6 +126,7 @@ const HostGroupUpdateSchema = z.object({
 });
 
 const ProductListSchema = z.object({
+  ...ServerParam,
   organization_id: z.string(),
   name: z.string().optional(),
   search: z.string().optional(),
@@ -119,10 +135,12 @@ const ProductListSchema = z.object({
 });
 
 const ProductGetSchema = z.object({
+  ...ServerParam,
   id: z.string()
 });
 
 const ProductCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   organization_id: z.string(),
   description: z.string().optional(),
@@ -134,6 +152,7 @@ const ProductCreateSchema = z.object({
 });
 
 const ProductUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   description: z.string().optional(),
@@ -145,6 +164,7 @@ const ProductUpdateSchema = z.object({
 });
 
 const ContentViewListSchema = z.object({
+  ...ServerParam,
   organization_id: z.string(),
   environment_id: z.string().optional(),
   name: z.string().optional(),
@@ -152,10 +172,12 @@ const ContentViewListSchema = z.object({
 });
 
 const ContentViewGetSchema = z.object({
+  ...ServerParam,
   id: z.string()
 });
 
 const ContentViewCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   organization_id: z.string(),
   description: z.string().optional(),
@@ -165,11 +187,13 @@ const ContentViewCreateSchema = z.object({
 });
 
 const ContentViewPublishSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   description: z.string().optional()
 });
 
 const RepositoryListSchema = z.object({
+  ...ServerParam,
   organization_id: z.string(),
   product_id: z.string().optional(),
   name: z.string().optional(),
@@ -177,6 +201,7 @@ const RepositoryListSchema = z.object({
 });
 
 const RepositoryCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   product_id: z.string(),
   content_type: z.enum(['yum', 'docker', 'file', 'puppet', 'deb']),
@@ -189,22 +214,26 @@ const RepositoryCreateSchema = z.object({
 });
 
 const RepositorySyncSchema = z.object({
+  ...ServerParam,
   id: z.string()
 });
 
 const OrganizationListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   per_page: z.number().optional(),
   page: z.number().optional()
 });
 
 const OrganizationCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   label: z.string().optional(),
   description: z.string().optional()
 });
 
 const TaskListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   state: z.enum(['running', 'paused', 'stopped', 'pending', 'planned']).optional(),
   result: z.enum(['success', 'error', 'warning', 'pending']).optional(),
@@ -213,6 +242,7 @@ const TaskListSchema = z.object({
 });
 
 const ComputeResourceListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -221,10 +251,12 @@ const ComputeResourceListSchema = z.object({
 });
 
 const ComputeResourceGetSchema = z.object({
+  ...ServerParam,
   id: z.string()
 });
 
 const ComputeResourceCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   provider: z.enum(['Proxmox', 'Vmware', 'EC2', 'GCE', 'Libvirt', 'Ovirt', 'Openstack']),
   url: z.string(),
@@ -239,6 +271,7 @@ const ComputeResourceCreateSchema = z.object({
 });
 
 const ComputeResourceUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   url: z.string().optional(),
@@ -251,6 +284,7 @@ const ComputeResourceUpdateSchema = z.object({
 });
 
 const SmartProxyListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -259,6 +293,7 @@ const SmartProxyListSchema = z.object({
 });
 
 const SmartProxyCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   url: z.string(),
   organization_ids: z.array(z.string()).optional(),
@@ -266,6 +301,7 @@ const SmartProxyCreateSchema = z.object({
 });
 
 const SmartProxyUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   url: z.string().optional(),
@@ -274,16 +310,19 @@ const SmartProxyUpdateSchema = z.object({
 });
 
 const ComputeProfileListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   per_page: z.number().optional(),
   page: z.number().optional()
 });
 
 const ComputeProfileCreateSchema = z.object({
+  ...ServerParam,
   name: z.string()
 });
 
 const SubnetListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -293,6 +332,7 @@ const SubnetListSchema = z.object({
 });
 
 const SubnetCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   network: z.string(),
   mask: z.string(),
@@ -313,6 +353,7 @@ const SubnetCreateSchema = z.object({
 });
 
 const SubnetUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   network: z.string().optional(),
@@ -328,6 +369,7 @@ const SubnetUpdateSchema = z.object({
 });
 
 const DomainListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -336,6 +378,7 @@ const DomainListSchema = z.object({
 });
 
 const DomainCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   fullname: z.string().optional(),
   dns_id: z.string().optional(),
@@ -345,6 +388,7 @@ const DomainCreateSchema = z.object({
 
 // Installation Media Schemas
 const MediaListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -353,6 +397,7 @@ const MediaListSchema = z.object({
 });
 
 const MediaCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   path: z.string(),
   os_family: z.enum(['Debian', 'Redhat', 'SUSE', 'Windows', 'Altlinux', 'Archlinux', 'Coreos', 'FreeBSD', 'Gentoo', 'Junos', 'NXOS', 'Rancheros', 'Solaris', 'VRP', 'XenServer']).optional(),
@@ -361,6 +406,7 @@ const MediaCreateSchema = z.object({
 });
 
 const MediaUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   path: z.string().optional(),
@@ -371,6 +417,7 @@ const MediaUpdateSchema = z.object({
 
 // Partition Table Schemas
 const PartitionTableListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -379,6 +426,7 @@ const PartitionTableListSchema = z.object({
 });
 
 const PartitionTableCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   layout: z.string(),
   os_family: z.enum(['Debian', 'Redhat', 'SUSE', 'Windows', 'Altlinux', 'Archlinux', 'Coreos', 'FreeBSD', 'Gentoo', 'Junos', 'NXOS', 'Rancheros', 'Solaris', 'VRP', 'XenServer']).optional(),
@@ -387,6 +435,7 @@ const PartitionTableCreateSchema = z.object({
 });
 
 const PartitionTableUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   layout: z.string().optional(),
@@ -397,6 +446,7 @@ const PartitionTableUpdateSchema = z.object({
 
 // Operating System Schemas
 const OperatingSystemListSchema = z.object({
+  ...ServerParam,
   search: z.string().optional(),
   organization_id: z.string().optional(),
   location_id: z.string().optional(),
@@ -405,6 +455,7 @@ const OperatingSystemListSchema = z.object({
 });
 
 const OperatingSystemCreateSchema = z.object({
+  ...ServerParam,
   name: z.string(),
   major: z.string(),
   minor: z.string().optional(),
@@ -418,6 +469,7 @@ const OperatingSystemCreateSchema = z.object({
 });
 
 const OperatingSystemUpdateSchema = z.object({
+  ...ServerParam,
   id: z.string(),
   name: z.string().optional(),
   major: z.string().optional(),
@@ -449,7 +501,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Get Foreman configuration from environment variables or config file
-const getForemanConfig = (): ForemanConfig => {
+const getForemanConfig = (serverName?: string): ForemanConfig => {
   // First try environment variables
   const baseUrl = process.env.FOREMAN_URL;
   const username = process.env.FOREMAN_USERNAME;
@@ -465,6 +517,25 @@ const getForemanConfig = (): ForemanConfig => {
     const configData = readFileSync(configPath, 'utf-8');
     const config = JSON.parse(configData);
     
+    // Check for new multi-server format
+    if (config.servers) {
+      const selectedServer = serverName || config.defaultServer || 'foreman';
+      const serverConfig = config.servers[selectedServer];
+      
+      if (!serverConfig) {
+        throw new Error(`Server '${selectedServer}' not found in configuration. Available servers: ${Object.keys(config.servers).join(', ')}`);
+      }
+      
+      if (serverConfig.baseUrl && serverConfig.username && serverConfig.token) {
+        return {
+          baseUrl: serverConfig.baseUrl,
+          username: serverConfig.username,
+          token: serverConfig.token
+        };
+      }
+    }
+    
+    // Support legacy single-server format
     if (config.baseUrl && config.username && config.token) {
       return {
         baseUrl: config.baseUrl,
@@ -477,15 +548,51 @@ const getForemanConfig = (): ForemanConfig => {
   throw new Error('Foreman configuration not found. Please set environment variables (FOREMAN_URL, FOREMAN_USERNAME, FOREMAN_TOKEN) or create foreman-config.json');
 };
 
-// Initialize Foreman client
-let foremanClient: ForemanClient | null = null;
+// Store multiple Foreman clients
+const foremanClients: { [key: string]: ForemanClient } = {};
+let availableServers: string[] = [];
 let initializationError: Error | null = null;
 
+// Initialize Foreman clients from config
 try {
-  const config = getForemanConfig();
-  foremanClient = new ForemanClient(config);
-  // Silence initialization messages for Claude Code compatibility
-  // Any output during startup may cause connection issues
+  const configPath = join(__dirname, '..', 'foreman-config.json');
+  if (existsSync(configPath)) {
+    const configData = readFileSync(configPath, 'utf-8');
+    const config = JSON.parse(configData);
+    
+    if (config.servers) {
+      // Multi-server configuration
+      availableServers = Object.keys(config.servers);
+      for (const serverName of availableServers) {
+        const serverConfig = config.servers[serverName];
+        if (serverConfig.baseUrl && serverConfig.username && serverConfig.token) {
+          foremanClients[serverName] = new ForemanClient({
+            baseUrl: serverConfig.baseUrl,
+            username: serverConfig.username,
+            token: serverConfig.token
+          });
+        }
+      }
+    } else if (config.baseUrl && config.username && config.token) {
+      // Legacy single-server configuration
+      foremanClients['default'] = new ForemanClient(config);
+      availableServers = ['default'];
+    }
+  } else {
+    // Try environment variables
+    const baseUrl = process.env.FOREMAN_URL;
+    const username = process.env.FOREMAN_USERNAME;
+    const token = process.env.FOREMAN_TOKEN;
+    
+    if (baseUrl && username && token) {
+      foremanClients['default'] = new ForemanClient({ baseUrl, username, token });
+      availableServers = ['default'];
+    }
+  }
+  
+  if (Object.keys(foremanClients).length === 0) {
+    throw new Error('No Foreman servers configured');
+  }
 } catch (error) {
   // Store error for later reporting through MCP protocol
   // Do NOT use console.error as it corrupts MCP communication
@@ -501,6 +608,7 @@ const tools: Tool[] = [
     inputSchema: {
       type: 'object',
       properties: {
+        server: { type: 'string', description: 'Server name to use (e.g., "foreman", "satellite"). If not specified, uses the default server.' },
         search: { type: 'string', description: 'Search query string' },
         organization_id: { type: 'string', description: 'Filter by organization ID' },
         location_id: { type: 'string', description: 'Filter by location ID' },
@@ -515,6 +623,7 @@ const tools: Tool[] = [
     inputSchema: {
       type: 'object',
       properties: {
+        server: { type: 'string', description: 'Server name to use (e.g., "foreman", "satellite"). If not specified, uses the default server.' },
         id: { type: 'string', description: 'Host ID or name' }
       },
       required: ['id']
@@ -526,6 +635,7 @@ const tools: Tool[] = [
     inputSchema: {
       type: 'object',
       properties: {
+        server: { type: 'string', description: 'Server name to use (e.g., "foreman", "satellite"). If not specified, uses the default server.' },
         name: { type: 'string', description: 'Host name' },
         organization_id: { type: 'string', description: 'Organization ID' },
         location_id: { type: 'string', description: 'Location ID' },
@@ -1535,400 +1645,535 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
   return { tools };
 });
 
+// Helper function to get the appropriate Foreman client
+const getClient = (serverName?: string): ForemanClient => {
+  if (Object.keys(foremanClients).length === 0) {
+    const errorMessage = initializationError 
+      ? `Foreman client initialization failed: ${initializationError.message}`
+      : 'No Foreman clients initialized';
+    throw new Error(errorMessage);
+  }
+  
+  // If no server specified, use the first available or 'foreman' if it exists
+  const selectedServer = serverName || (foremanClients['foreman'] ? 'foreman' : availableServers[0]);
+  const client = foremanClients[selectedServer];
+  
+  if (!client) {
+    throw new Error(`Server '${selectedServer}' not found. Available servers: ${availableServers.join(', ')}`);
+  }
+  
+  return client;
+};
+
 // Handle tool execution
 server.setRequestHandler(CallToolRequestSchema, async (request) => {
   try {
     const { name, arguments: args } = request.params;
 
-    // Check if client was initialized successfully
-    if (!foremanClient) {
-      const errorMessage = initializationError 
-        ? `Foreman client initialization failed: ${initializationError.message}`
-        : 'Foreman client not initialized';
-      return { 
-        content: [{ 
-          type: 'text', 
-          text: errorMessage 
-        }],
-        isError: true
-      };
-    }
-
     switch (name) {
       // Host Management
       case 'foreman_list_hosts': {
         const params = HostListSchema.parse(args);
-        const result = await foremanClient.listHosts(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listHosts(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_host': {
         const params = HostGetSchema.parse(args);
-        const result = await foremanClient.getHost(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getHost(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_host': {
         const params = HostCreateSchema.parse(args);
-        const result = await foremanClient.createHost(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createHost(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_host': {
         const params = HostUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateHost(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateHost(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_host': {
         const params = HostDeleteSchema.parse(args);
-        const result = await foremanClient.deleteHost(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteHost(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_power_host': {
         const params = HostPowerSchema.parse(args);
-        const result = await foremanClient.powerHost(params.id, params.action);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.powerHost(apiParams.id, apiParams.action);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Host Group Management
       case 'foreman_list_hostgroups': {
         const params = HostGroupListSchema.parse(args);
-        const result = await foremanClient.listHostGroups(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listHostGroups(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_hostgroup': {
         const params = HostGroupGetSchema.parse(args);
-        const result = await foremanClient.getHostGroup(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getHostGroup(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_hostgroup': {
         const params = HostGroupCreateSchema.parse(args);
-        const result = await foremanClient.createHostGroup(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createHostGroup(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_hostgroup': {
         const params = HostGroupUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateHostGroup(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateHostGroup(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_hostgroup': {
         const params = HostGroupGetSchema.parse(args);
-        const result = await foremanClient.deleteHostGroup(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteHostGroup(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Product Management
       case 'foreman_list_products': {
         const params = ProductListSchema.parse(args);
-        const result = await foremanClient.listProducts(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listProducts(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_product': {
         const params = ProductGetSchema.parse(args);
-        const result = await foremanClient.getProduct(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getProduct(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_product': {
         const params = ProductCreateSchema.parse(args);
-        const result = await foremanClient.createProduct(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createProduct(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_product': {
         const params = ProductUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateProduct(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateProduct(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_product': {
         const params = ProductGetSchema.parse(args);
-        const result = await foremanClient.deleteProduct(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteProduct(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_sync_product': {
         const params = ProductGetSchema.parse(args);
-        const result = await foremanClient.syncProduct(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.syncProduct(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Content View Management
       case 'foreman_list_content_views': {
         const params = ContentViewListSchema.parse(args);
-        const result = await foremanClient.listContentViews(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listContentViews(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_content_view': {
         const params = ContentViewGetSchema.parse(args);
-        const result = await foremanClient.getContentView(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getContentView(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_content_view': {
         const params = ContentViewCreateSchema.parse(args);
-        const result = await foremanClient.createContentView(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createContentView(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_publish_content_view': {
         const params = ContentViewPublishSchema.parse(args);
-        const result = await foremanClient.publishContentView(params.id, params.description);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.publishContentView(apiParams.id, apiParams.description);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Repository Management
       case 'foreman_list_repositories': {
         const params = RepositoryListSchema.parse(args);
-        const result = await foremanClient.listRepositories(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listRepositories(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_repository': {
         const params = RepositoryCreateSchema.parse(args);
-        const result = await foremanClient.createRepository(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createRepository(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_sync_repository': {
         const params = RepositorySyncSchema.parse(args);
-        const result = await foremanClient.syncRepository(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.syncRepository(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Organization Management
       case 'foreman_list_organizations': {
         const params = OrganizationListSchema.parse(args);
-        const result = await foremanClient.listOrganizations(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listOrganizations(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_organization': {
         const params = OrganizationCreateSchema.parse(args);
-        const result = await foremanClient.createOrganization(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createOrganization(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Task Management
       case 'foreman_list_tasks': {
         const params = TaskListSchema.parse(args);
-        const result = await foremanClient.listTasks(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listTasks(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Compute Resource Management
       case 'foreman_list_compute_resources': {
         const params = ComputeResourceListSchema.parse(args);
-        const result = await foremanClient.listComputeResources(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listComputeResources(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_compute_resource': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getComputeResource(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getComputeResource(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_compute_resource': {
         const params = ComputeResourceCreateSchema.parse(args);
-        const result = await foremanClient.createComputeResource(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createComputeResource(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_compute_resource': {
         const params = ComputeResourceUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateComputeResource(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateComputeResource(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_compute_resource': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.deleteComputeResource(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteComputeResource(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_compute_resource_available_images': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getComputeResourceAvailableImages(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getComputeResourceAvailableImages(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_compute_resource_available_networks': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getComputeResourceAvailableNetworks(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getComputeResourceAvailableNetworks(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Smart Proxy Management
       case 'foreman_list_smart_proxies': {
         const params = SmartProxyListSchema.parse(args);
-        const result = await foremanClient.listSmartProxies(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listSmartProxies(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_smart_proxy': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getSmartProxy(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getSmartProxy(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_smart_proxy': {
         const params = SmartProxyCreateSchema.parse(args);
-        const result = await foremanClient.createSmartProxy(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createSmartProxy(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_smart_proxy': {
         const params = SmartProxyUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateSmartProxy(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateSmartProxy(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_smart_proxy': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.deleteSmartProxy(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteSmartProxy(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_refresh_smart_proxy': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.refreshSmartProxy(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.refreshSmartProxy(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Compute Profile Management
       case 'foreman_list_compute_profiles': {
         const params = ComputeProfileListSchema.parse(args);
-        const result = await foremanClient.listComputeProfiles(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listComputeProfiles(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_compute_profile': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getComputeProfile(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getComputeProfile(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_compute_profile': {
         const params = ComputeProfileCreateSchema.parse(args);
-        const result = await foremanClient.createComputeProfile(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createComputeProfile(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_compute_profile': {
         const params = ComputeResourceUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateComputeProfile(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateComputeProfile(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_compute_profile': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.deleteComputeProfile(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteComputeProfile(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Subnet Management
       case 'foreman_list_subnets': {
         const params = SubnetListSchema.parse(args);
-        const result = await foremanClient.listSubnets(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listSubnets(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_subnet': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getSubnet(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getSubnet(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_subnet': {
         const params = SubnetCreateSchema.parse(args);
-        const result = await foremanClient.createSubnet(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createSubnet(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_subnet': {
         const params = SubnetUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateSubnet(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateSubnet(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_subnet': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.deleteSubnet(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteSubnet(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Domain Management
       case 'foreman_list_domains': {
         const params = DomainListSchema.parse(args);
-        const result = await foremanClient.listDomains(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listDomains(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_domain': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getDomain(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getDomain(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_domain': {
         const params = DomainCreateSchema.parse(args);
-        const result = await foremanClient.createDomain(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createDomain(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_domain': {
         const params = ComputeResourceUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateDomain(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateDomain(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_domain': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.deleteDomain(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteDomain(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Installation Media Management
       case 'foreman_list_media': {
         const params = MediaListSchema.parse(args);
-        const result = await foremanClient.listMedia(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listMedia(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_medium': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getMedium(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getMedium(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_medium': {
         const params = MediaCreateSchema.parse(args);
-        const result = await foremanClient.createMedium(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createMedium(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_medium': {
         const params = MediaUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateMedium(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateMedium(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_medium': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.deleteMedium(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteMedium(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Partition Table Management
       case 'foreman_list_partition_tables': {
         const params = PartitionTableListSchema.parse(args);
-        const result = await foremanClient.listPartitionTables(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listPartitionTables(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_partition_table': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getPartitionTable(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getPartitionTable(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_partition_table': {
         const params = PartitionTableCreateSchema.parse(args);
-        const result = await foremanClient.createPartitionTable(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createPartitionTable(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_partition_table': {
         const params = PartitionTableUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updatePartitionTable(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updatePartitionTable(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_partition_table': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.deletePartitionTable(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deletePartitionTable(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       // Operating System Management
       case 'foreman_list_operating_systems': {
         const params = OperatingSystemListSchema.parse(args);
-        const result = await foremanClient.listOperatingSystems(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.listOperatingSystems(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_get_operating_system': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.getOperatingSystem(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.getOperatingSystem(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_create_operating_system': {
         const params = OperatingSystemCreateSchema.parse(args);
-        const result = await foremanClient.createOperatingSystem(params);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.createOperatingSystem(apiParams);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_update_operating_system': {
         const params = OperatingSystemUpdateSchema.parse(args);
-        const { id, ...updateData } = params;
-        const result = await foremanClient.updateOperatingSystem(id, updateData);
+        const { server, id, ...updateData } = params;
+        const client = getClient(server);
+        const result = await client.updateOperatingSystem(id, updateData);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       case 'foreman_delete_operating_system': {
         const params = ComputeResourceGetSchema.parse(args);
-        const result = await foremanClient.deleteOperatingSystem(params.id);
+        const { server, ...apiParams } = params;
+        const client = getClient(server);
+        const result = await client.deleteOperatingSystem(apiParams.id);
         return { content: [{ type: 'text', text: JSON.stringify(result, null, 2) }] };
       }
       default:

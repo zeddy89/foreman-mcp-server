@@ -30,7 +30,7 @@ export FOREMAN_USERNAME="your-username"
 export FOREMAN_TOKEN="your-personal-access-token"
 ```
 
-### Option 2: Configuration File
+### Option 2: Configuration File (Single Server)
 
 Create a `foreman-config.json` file in the project root:
 
@@ -39,6 +39,33 @@ Create a `foreman-config.json` file in the project root:
   "baseUrl": "https://your-foreman-instance.com",
   "username": "your-username",
   "token": "your-personal-access-token"
+}
+```
+
+### Option 3: Configuration File (Multiple Servers)
+
+To support multiple Foreman/Satellite servers, use this format:
+
+```json
+{
+  "servers": {
+    "foreman": {
+      "baseUrl": "https://your-foreman-server.com",
+      "username": "foreman-admin",
+      "token": "foreman-token"
+    },
+    "satellite": {
+      "baseUrl": "https://your-satellite-server.com",
+      "username": "satellite-admin",
+      "token": "satellite-token"
+    },
+    "dev": {
+      "baseUrl": "https://dev-foreman.example.com",
+      "username": "dev-admin",
+      "token": "dev-token"
+    }
+  },
+  "defaultServer": "foreman"
 }
 ```
 
@@ -75,6 +102,8 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 ```
 
 ## Available Tools
+
+All tools support an optional `server` parameter to specify which server to use. If not specified, the default server is used.
 
 ### Host Management
 - `foreman_list_hosts` - List all hosts with optional filters
@@ -137,6 +166,33 @@ The server includes natural language processing capabilities. You can use phrase
 - "Sync repository centos-base"
 - "List running tasks"
 - "Show failed tasks"
+
+## Using Multiple Servers
+
+When you have multiple servers configured, you can specify which server to use:
+
+### Using Tool Parameters
+```javascript
+// List hosts from the satellite server
+foreman_list_hosts({ server: "satellite" })
+
+// Create a host on the dev server
+foreman_create_host({ 
+  server: "dev",
+  name: "test-host",
+  organization_id: "1",
+  location_id: "1"
+})
+
+// Query different servers
+foreman_list_organizations({ server: "foreman" })
+foreman_list_organizations({ server: "satellite" })
+```
+
+### Natural Language with Server Specification
+- "List all hosts on the satellite server"
+- "Show me content views from the dev server"
+- "Create a repository on satellite"
 
 ## Development
 
